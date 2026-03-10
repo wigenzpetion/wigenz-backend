@@ -16,10 +16,24 @@ function listSqlFiles(dir) {
     throw new Error(`Migrations directory not found: ${dir}`);
   }
 
+  const orderedSameDaySupportMigrations = {
+    "20260306_support_tickets.sql": 0,
+    "20260306_support_priority_category.sql": 1,
+    "20260306_support_attachments.sql": 2,
+  };
+
   return fs
     .readdirSync(dir)
     .filter((name) => name.toLowerCase().endsWith(".sql"))
-    .sort((a, b) => a.localeCompare(b));
+    .sort((a, b) => {
+      const aRank = orderedSameDaySupportMigrations[a];
+      const bRank = orderedSameDaySupportMigrations[b];
+
+      if (aRank !== undefined && bRank !== undefined) {
+        return aRank - bRank;
+      }
+      return a.localeCompare(b);
+    });
 }
 
 async function run() {
