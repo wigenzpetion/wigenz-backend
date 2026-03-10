@@ -1,4 +1,5 @@
 name: Backend CI
+# Trigger note: workflow kept active for push/pr on all branches.
 
 on:
   push:
