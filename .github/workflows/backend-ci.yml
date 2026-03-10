@@ -26,17 +26,17 @@ jobs:
           --health-retries 10
 
     env:
-      PORT: 3000
-      CORS_ORIGIN: http://localhost:3001
-      DB_HOST: 127.0.0.1
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: wigenz_db
-      DB_SSL: "false"
-      JWT_SECRET: ci_jwt_secret
-      JWT_REFRESH_SECRET: ci_refresh_secret
-      SUPER_ADMIN_EMAIL: admin@example.com
+      PORT: ${{ vars.PORT || '3000' }}
+      CORS_ORIGIN: ${{ vars.CORS_ORIGIN || 'http://localhost:3001' }}
+      DB_HOST: ${{ secrets.DB_HOST || '127.0.0.1' }}
+      DB_PORT: ${{ secrets.DB_PORT || '5432' }}
+      DB_USER: ${{ secrets.DB_USER || 'postgres' }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
+      DB_NAME: ${{ secrets.DB_NAME || 'wigenz_db' }}
+      DB_SSL: ${{ vars.DB_SSL || 'false' }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci_jwt_secret' }}
+      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET || 'ci_refresh_secret' }}
+      SUPER_ADMIN_EMAIL: ${{ vars.SUPER_ADMIN_EMAIL || 'admin@example.com' }}
 
     steps:
       - name: Checkout
