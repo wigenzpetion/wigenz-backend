@@ -1,0 +1,14 @@
+﻿{
+  "Servers": {
+    "1": {
+      "Name": "Wigenz Local PostgreSQL",
+      "Group": "Wigenz",
+      "Host": "localhost",
+      "Port": 5432,
+      "MaintenanceDB": "postgres",
+      "Username": "postgres",
+      "SSLMode": "prefer",
+      "Comment": "Connexion locale du projet wigenz-backen"
+    }
+  }
+}

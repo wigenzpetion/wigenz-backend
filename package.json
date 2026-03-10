@@ -1,0 +1,52 @@
+{
+  "name": "wigenz-backend",
+  "version": "1.0.0",
+  "description": "Wigenz Backend API",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "node scripts/check-syntax.js",
+    "test": "node scripts/run-tests.js",
+    "test:rbac": "node scripts/run-rbac-smoke-tests.js",
+    "test:rebac:support": "node scripts/run-rebac-support-tests.js",
+    "test:rebac:finance": "node scripts/run-rebac-finance-tests.js",
+    "check:rebac-readiness": "node scripts/check-rebac-readiness.js",
+    "validate:i18n": "node scripts/validate-i18n.js",
+    "migrate": "node scripts/run-migrations.js",
+    "migrate:support": "node scripts/run-support-migrations.js",
+    "rbac:assign": "node scripts/seed-rbac-assignments.js",
+    "guard:logic": "node backend-protection/guardian/logic-guard.mjs",
+    "guard:arch": "node backend-protection/ai-dev-guardian-architecture.mjs",
+    "prestart": "npm run validate:i18n",
+    "predev": "npm run validate:i18n"
+  },
+  "author": "Wigenz",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "chalk": "^5.6.2",
+    "chokidar": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.3.0",
+    "execa": "^9.6.1",
+    "firebase-admin": "^12.5.0",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "json2csv": "^5.0.7",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "ngeohash": "^0.6.3",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.14",
+    "pdfkit": "^0.16.0",
+    "pg": "^8.20.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

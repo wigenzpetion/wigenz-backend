@@ -1,0 +1,1 @@
+module.exports = require("../payout/payout.controller");

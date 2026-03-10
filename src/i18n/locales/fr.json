@@ -1,0 +1,29 @@
+{
+    "general.success": "Opération réussie.",
+    "general.error": "Une erreur est survenue.",
+    "general.unauthorized": "Accès non autorisé.",
+    "general.forbidden": "Action interdite.",
+  
+    "auth.invalid_credentials": "Identifiants invalides.",
+    "auth.account_suspended": "Votre compte est suspendu.",
+    "auth.token_expired": "Session expirée.",
+  
+    "wallet.insufficient_balance": "Solde insuffisant.",
+    "wallet.withdraw_blocked_grace": "Retrait temporairement bloqué en raison d’un abonnement impayé.",
+    "wallet.withdraw_blocked_suspended": "Retrait bloqué. Abonnement suspendu.",
+  
+    "subscription.retry.subject": "Nouvelle tentative de paiement",
+    "subscription.retry.body": "Tentative {{attempt}} échouée. Merci d’alimenter votre wallet.",
+  
+    "subscription.grace.subject": "Période de grâce activée",
+    "subscription.grace.body": "Vous disposez de 14 jours pour régulariser votre abonnement.",
+  
+    "subscription.suspended.subject": "Abonnement suspendu",
+    "subscription.suspended.body": "Votre accès est suspendu suite à un impayé.",
+  
+    "subscription.payment_success.subject": "Paiement réussi",
+    "subscription.payment_success.body": "Votre abonnement a été renouvelé avec succès.",
+  
+    "subscription.pause_requested": "Votre abonnement sera mis en pause à la fin du cycle actuel.",
+    "subscription.cancel_requested": "Votre abonnement sera résilié à la fin du cycle actuel."
+  }

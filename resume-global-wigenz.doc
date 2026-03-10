@@ -1,0 +1,219 @@
+{\rtf1\ansi\deff0
+{\*\generator Cursor;}
+\par
+\b R\u233?\u233?sum\u233? global \u8212? Wigenz (version mise \u224? jour)\b0
+\par
+\par
+\b Ce qu'est Wigenz\b0
+\par
+Plateforme marketplace de transport (type Uber Eats / DoorDash / Bolt Food) avec trois acteurs: Plateforme, Client, Chauffeur. Fonctions: exp\u233?dition automatique, anti-fraude, paiements, grand livre, facturation, OTP livraison, validation GPS, administration RBAC.
+\par
+\par
+\b Flux m\u233?tier (commande -> paiement chauffeur)\b0
+\par
+1. Client cr\u233?e commande -> POST /orders -> COMMANDE_CR\u233?\u233?E -> EventBus COMMANDE_CR\u233?\u233?E.
+\par
+2. Dispatch: geohash, chauffeurs proches, dispatch.guard -> multi-dispatch aux 5 meilleurs (15 s).
+\par
+3. Chauffeur accepte -> anti double attribution -> CHAUFFEUR_ATTRIBU\u233? (voir d\u233?tail ci-dessous).
+\par
+4. Ramassage -> COMMANDE_PRISE_EN_CHARGE (voir d\u233?tail ci-dessous).
+\par
+5. Livraison: g\u233?ofencing 50 m, preuves (photo, GPS, signature, OTP) -> delivery.guard -> LIVR\u233? -> EventBus COMMANDE_LIVR\u233?E (voir d\u233?tail ci-dessous).
+\par
+6. Facture client (PDF + email).
+\par
+7. Paiement chauffeur: file d'attente -> d\u233?lai 10 h (apr\u232?s derni\u232?re livraison) -> CRON -> cr\u233?dit wallet + ledger + facture chauffeur.
+\par
+8. Ledger: \u233?critures, SHA256, previous_hash -> registre immuable.
+\par
+9. Annulation: avant d\u233?placement = sans frais; apr\u232?s = frais d'approche (voir d\u233?tail ci-dessous).
+\par
+10. Audit: journalisation des actions critiques.
+\par
+\par
+\b D\u233?tail \u233?tape 3 : Chauffeur accept\u233? -> Anti-double attribution -> CHAUFFEUR_ATTRIBU\u233?\b0
+\par
+\b 1. Chauffeur accept\u233? (Le Trigger)\b0
+\par
+Le chauffeur re\u231?oit une notification "Proposition de course". Lorsqu'il clique sur "Accepter", il envoie POST ou PATCH \u224? l'API. \u224? cet instant, la commande est encore en \u233?tat SEARCHING_DRIVER (en recherche).
+\par
+\par
+\b 2. Anti-double attribution (Le Verrou)\b0
+\par
+S\u233?curit\u233? atomique du backend. Sans cela, si deux chauffeurs cliquent en m\u234?me temps, le syst\u232?me pourrait valider les deux.
+\par
+- V\u233?rification: driver_status = AVAILABLE, order_status = SEARCHING.
+\par
+- Verrouillage: UPDATE orders SET driver_id = $1 WHERE id = $2 AND driver_id IS NULL. La condition AND driver_id IS NULL agit comme verrou optimiste (une seule requ\u234?te r\u233?ussit; les autres voient 0 ligne modifi\u233?e).
+\par
+- Si Chauffeur B arrive trop tard: erreur "Ce cours a d\u233?j\u224? \u233?t\u233? attribu\u233?".
+\par
+\par
+\b 3. \u201?tat CHAUFFEUR_ATTRIBU\u233? (La Confirmation)\b0
+\par
+Transaction SQL simultan\u233?e:
+\par
+- order.status = 'CHAUFFEUR_ATTRIBU\u233?'
+\par
+- order.driver_id = X
+\par
+- driver.status = 'BUSY' (ou current_order_id rempli) -> ne re\u231?oit plus d'offres
+\par
+- Ledger: entr\u233?e "prestation engag\u233?e"
+\par
+\par
+\b D\u233?tail \u233?tape 4 : Ramassage -> COMMANDE_PRISE_EN_CHARGE\b0
+\par
+\b G\u233?ofencing ramassage\b0
+\par
+L'API v\u233?rifie si les coordonn\u233?es GPS du chauffeur sont dans un rayon de X m\u232?tres (ex: 100 m) du point de collecte.
+\par
+\par
+\b Photo ramassage colis\b0
+\par
+Le chauffeur doit prendre une photo du colis au moment du ramassage (preuve visuelle).
+\par
+\par
+\b Impact sur le Ledger et l'Antifraude\b0
+\par
+- Engagement des fonds: Le syst\u232?me confirme que le service est en cours d'ex\u233?cution. Si le client annule maintenant, une compensation (frais d'annulation) sera pr\u233?lev\u233?e car le livreur a d\u233?j\u224? pris une photo du ramassage.
+\par
+- S\u233?curit\u233? Antifraude: Le syst\u232?me v\u233?rifie que le temps entre ATTRIBU\u233? et PRISE_EN_CHARGE est coh\u233?rent. Si c'est trop rapide (ex: 1 seconde pour 2 km), l'antifraude l\u232?ve un drapeau sur une potentielle fausse position GPS.
+\par
+\par
+\b D\u233?tail \u233?tape 5 : Livraison (g\u233?ofencing 50 m, preuves, delivery.guard)\b0
+\par
+\b OTP client\b0
+\par
+Message unique re\u231?u par le client "Votre colis est arriv\u233?". Utilis\u233? en cas normal (optionnel selon r\u232?gles).
+\par
+\par
+\b Logique typique\b0
+\par
+- Cas normal (GPS valide, 50 m ou moins): photo + position (GPS) + signature obligatoire; si m\u233?tadonn\u233?es photo fournies -> validation (timestamp, position); et au moins une des preuves juridiques: signature chauffeur OU OTP client.
+\par
+- Cas GPS impr\u233?cis (probl\u232?me GPS ou > 50 m): OTP obligatoire pour valider la livraison.
+\par
+- Si les conditions ne sont pas remplies -> le guard refuse (ex. "Delivery validation failed") et la commande ne passe pas en LIVR\u233?.
+\par
+\par
+\b Anti-Fake Delivery\b0
+\par
+Le delivery.guard compare l'heure de la photo (m\u233?tadonn\u233?es EXIF) avec l'heure du GPS. Si un livreur tente d'uploader une photo prise il y a 3 jours, le garde l\u232?ve un drapeau Antifraude.
+\par
+\par
+\b G\u233?ofencing 50 m\b0
+\par
+D\u232?s que le chauffeur approche de la destination, le syst\u232?me active le G\u233?ofencing (50 m). Si le chauffeur tente de cliquer sur "Livr\u233?" \u224? 200 m de l'adresse, le delivery.guard rejette la requ\u234?te avec un message: "Veuillez remplir toutes les conditions".
+\par
+\par
+\b Hi\u233?rarchie des Preuves\b0
+\par
+Si le cercle de g\u233?ofencing n'est pas atteint, le syst\u232?me exige une preuve de niveau sup\u233?rieur pour compenser l'incertitude g\u233?ographique.
+\par
+- Protocole OTP (Code de validation): Si le client donne son code secret au livreur, peu importe que le GPS dise qu'il est \u224? 100 m. La rencontre physique est prouv\u233?e.
+\par
+- Photo avec M\u233?tadonn\u233?es: Le syst\u232?me analyse le fichier image. Si les coordonn\u233?es EXIF de la photo sont correctes (m\u234?me si le flux GPS en temps r\u233?el b\u233?gayait), le garde valide.
+\par
+- Appel Client Int\u233?gr\u233?: Le syst\u232?me v\u233?rifie si un appel a eu lieu entre le livreur et le client via la plateforme dans les 2 derni\u232?res minutes. Indicateur fort de proximit\u233?.
+\par
+\par
+\b Garantie de Livraison des Messages\b0
+\par
+Dans un backend comme Wigenz, on utilise souvent Redis Pub/Sub, RabbitMQ ou EventEmitter (Node.js). L'important est de s'assurer que si le serveur red\u233?marre pile au moment de la livraison, le message n'est pas perdu et le Ledger est bien mis \u224? jour.
+\par
+\par
+\b D\u233?tail \u233?tape 7 : Paiement chauffeur (d\u233?lai 10 h)\b0
+\par
+- Le paiement n'est pas imm\u233?diat. Il attend 10 h apr\u232?s la derni\u232?re livraison pour \u234?tre pay\u233?.
+\par
+- Laisser le temps au client de signaler un litige.
+\par
+- Limiter les remboursements.
+\par
+- R\u233?duire les risques de fraude.
+\par
+- M\u234?me s'il y a plusieurs livraisons, 10 h apr\u232?s la derni\u232?re.
+\par
+\par
+\b D\u233?tail \u233?tape 9 : Annulation (frais d'approche)\b0
+\par
+\b Apr\u232?s d\u233?placement = frais d'approche\b0
+\par
+Si le chauffeur s'est d\u233?j\u224? d\u233?plac\u233? (trajet vers le point de ramassage ou vers la livraison):
+\par
+- Frais d'approche: 15% du montant pour le chauffeur, 5% pour les frais dossier de la compagnie. Total 20%.
+\par
+- Client d\u233?bit\u233?: WalletService.debit(clientId, approachFee)
+\par
+- Chauffeur cr\u233?dit\u233?: WalletService.credit(driverId, driverFee) - 15%
+\par
+- 5% dans le compte de la compagnie
+\par
+- Enregistrement dans cancellation_fees (order_id, driver_id, amount)
+\par
+- La commande passe au statut CANCELLED
+\par
+Le chauffeur est ainsi indemnis\u233? pour le trajet d\u233?j\u224? effectu\u233?.
+\par
+\par
+\b Architecture technique (base)\b0
+\par
+- Entr\u233?es: App Client, App Chauffeur, Dashboard Admin.
+\par
+- Backend: API Gateway (Node.js / Express) -> modules m\u233?tier -> services -> PostgreSQL.
+\par
+- Structure: src/ avec config/, core/, middlewares/, modules/, services/, utils/.
+\par
+- Par module: controller -> service -> repository (-> DB) + validation et routes.
+\par
+\par
+\b Logiques d'architecture (inchang\u233?es)\b0
+\par
+- Marketplace: Client -> Chauffeur -> Plateforme (commission).
+\par
+- Modulaire: un module par domaine.
+\par
+- \u201?\u233?v\u233?nementielle: EventBus.
+\par
+- Dispatch: Geohash + pool dispo -> 5 meilleurs, 15 s, repli.
+\par
+- Anti double: driver_id IS NULL, current_order_id.
+\par
+- Livraison: multi-preuves, delivery.guard, OTP si GPS impr\u233?cis.
+\par
+- G\u233?ofencing: distance 50 m (Haversine).
+\par
+- Photo anti-fraude: m\u233?tadonn\u233?es, horodatage, GPS, distance.
+\par
+- Paiement: client (payment + facture); chauffeur (diff\u233?r\u233? 10 h).
+\par
+- Portefeuille: un wallet par utilisateur.
+\par
+- Ledger (fintech): double entr\u233?e, SHA256, previous_hash.
+\par
+- RBAC admin: r\u244?les d\u233?di\u233?s.
+\par
+- Audit: journal des actions critiques.
+\par
+- Abonnement chauffeur: renouvellement, d\u233?lai de gr\u226?ce, suspension.
+\par
+- Annulation compens\u233?e: frais d'approche 20% (15% chauffeur + 5% compagnie) apr\u232?s d\u233?placement.
+\par
+\par
+\b Couches d'am\u233?lioration\b0
+\par
+1. Limiteur de d\u233?bit (rate limiting). 2. File d'attente (BullMQ, RabbitMQ). 3. Monitoring (Prometheus, Grafana). 4. Cache Redis. 5. Antifraude avanc\u233?. 6. G\u233?olocalisation temps r\u233?el. 7. Mise \u224? l'\u233?chelle horizontale. 8. Orchestrateur de services.
+\par
+\par
+\b Architecture de production\b0
+\par
+APPLICATION CLIENT | APPLICATION PILOTE | PANNEAU ADMIN -> \u201?\u201?\u201?QUILIBREUR DE CHARGE -> SERVEURS API (xN) -> SERVICES PRINCIPAUX -> FILE D'ATTENTE -> POSTGRESQL -> CACHE REDIS
+\par
+\par
+\b Synth\u232?se\b0
+\par
+Wigenz = marketplace de transport. Logique m\u233?tier: modulaire, \u233?v\u233?nementielle. Flux: commande -> dispatch -> ramassage (photo + g\u233?ofencing) -> livraison multi-preuves (OTP, signature, photo EXIF) -> facturation -> paiement chauffeur diff\u233?r\u233? 10 h -> ledger et audit. Annulation: 20% (15% chauffeur + 5% compagnie) apr\u232?s d\u233?placement. Principe: augmenter sans casser.
+\par
+}

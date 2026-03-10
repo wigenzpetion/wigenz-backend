@@ -1,0 +1,29 @@
+{
+    "general.success": "Operation successful.",
+    "general.error": "An error occurred.",
+    "general.unauthorized": "Unauthorized access.",
+    "general.forbidden": "Action forbidden.",
+  
+    "auth.invalid_credentials": "Invalid credentials.",
+    "auth.account_suspended": "Your account is suspended.",
+    "auth.token_expired": "Session expired.",
+  
+    "wallet.insufficient_balance": "Insufficient balance.",
+    "wallet.withdraw_blocked_grace": "Withdrawal temporarily blocked due to unpaid subscription.",
+    "wallet.withdraw_blocked_suspended": "Withdrawal blocked. Subscription suspended.",
+  
+    "subscription.retry.subject": "Subscription Payment Retry",
+    "subscription.retry.body": "Attempt {{attempt}} failed. Please fund your wallet.",
+  
+    "subscription.grace.subject": "Grace Period Started",
+    "subscription.grace.body": "You have 14 days to regularize your subscription.",
+  
+    "subscription.suspended.subject": "Subscription Suspended",
+    "subscription.suspended.body": "Your access has been suspended due to unpaid subscription.",
+  
+    "subscription.payment_success.subject": "Payment Successful",
+    "subscription.payment_success.body": "Your subscription has been successfully renewed.",
+  
+    "subscription.pause_requested": "Your subscription will be paused at the end of the current billing cycle.",
+    "subscription.cancel_requested": "Your subscription will be cancelled at the end of the current billing cycle."
+  }

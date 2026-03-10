@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 600 16px Arial, sans-serif; fill: #334155; }
+      .box { fill: #0b5cab; stroke: #083b6e; stroke-width: 2; rx: 12; }
+      .box2 { fill: #0f766e; stroke: #115e59; stroke-width: 2; rx: 12; }
+      .box3 { fill: #0f172a; stroke: #020617; stroke-width: 2; rx: 12; }
+      .diamond { fill: #f59e0b; stroke: #b45309; stroke-width: 2; }
+      .deny { fill: #dc2626; stroke: #7f1d1d; stroke-width: 2; rx: 12; }
+      .text { font: 700 15px Arial, sans-serif; fill: #ffffff; text-anchor: middle; }
+      .textDark { font: 700 14px Arial, sans-serif; fill: #0f172a; text-anchor: middle; }
+      .label { font: 600 14px Arial, sans-serif; fill: #334155; }
+      .line { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="620" class="bg"/>
+  <text x="700" y="48" class="title" text-anchor="middle">Wigenz Runtime Access Flow</text>
+  <text x="700" y="78" class="subtitle" text-anchor="middle">RBAC + ABAC global, ReBAC cible seulement Support et Finance</text>
+
+  <rect x="40" y="220" width="170" height="70" class="box"/>
+  <text x="125" y="260" class="text">Utilisateur</text>
+
+  <rect x="250" y="220" width="200" height="70" class="box"/>
+  <text x="350" y="250" class="text">JWT decode</text>
+  <text x="350" y="270" class="text">id + role</text>
+
+  <rect x="490" y="220" width="200" height="70" class="box"/>
+  <text x="590" y="260" class="text">auth.middleware</text>
+
+  <rect x="730" y="220" width="230" height="70" class="box2"/>
+  <text x="845" y="250" class="text">RBAC + ABAC</text>
+  <text x="845" y="270" class="text">permission + scope</text>
+
+  <polygon points="1040,198 1170,255 1040,312 910,255" class="diamond"/>
+  <text x="1040" y="248" class="textDark">Route dans</text>
+  <text x="1040" y="268" class="textDark">Support/Finance ?</text>
+
+  <rect x="1220" y="130" width="150" height="70" class="box3"/>
+  <text x="1295" y="170" class="text">Controller</text>
+
+  <rect x="1220" y="220" width="150" height="70" class="box3"/>
+  <text x="1295" y="260" class="text">Service</text>
+
+  <rect x="1220" y="310" width="150" height="70" class="box3"/>
+  <text x="1295" y="350" class="text">Repository</text>
+
+  <rect x="1220" y="400" width="150" height="70" class="box3"/>
+  <text x="1295" y="440" class="text">PostgreSQL</text>
+
+  <rect x="910" y="380" width="260" height="70" class="box2"/>
+  <text x="1040" y="410" class="text">ReBAC relation check</text>
+  <text x="1040" y="430" class="text">team / assignee / manager</text>
+
+  <rect x="730" y="400" width="150" height="70" class="deny"/>
+  <text x="805" y="440" class="text">403</text>
+
+  <path d="M210 255 L250 255" class="line"/>
+  <path d="M450 255 L490 255" class="line"/>
+  <path d="M690 255 L730 255" class="line"/>
+  <path d="M960 255 L910 255" class="line"/>
+
+  <path d="M1170 255 L1220 165" class="line"/>
+  <path d="M1295 200 L1295 220" class="line"/>
+  <path d="M1295 290 L1295 310" class="line"/>
+  <path d="M1295 380 L1295 400" class="line"/>
+
+  <path d="M1040 312 L1040 380" class="line"/>
+  <path d="M910 255 L805 400" class="line"/>
+  <path d="M1040 380 L1220 255" class="line"/>
+
+  <text x="1176" y="210" class="label">non</text>
+  <text x="1060" y="350" class="label">oui</text>
+  <text x="760" y="358" class="label">deny</text>
+
+  <text x="700" y="560" class="subtitle" text-anchor="middle">Support et Finance utilisent une garde relationnelle supplementaire. Les autres domaines restent RBAC + ABAC.</text>
+</svg>

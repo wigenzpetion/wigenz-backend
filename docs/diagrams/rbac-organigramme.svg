@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="980" viewBox="0 0 1700 980">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 600 17px Arial, sans-serif; fill: #334155; }
+      .nodeTop { fill: #4f46e5; stroke: #312e81; stroke-width: 2; rx: 14; }
+      .node { fill: #0b5cab; stroke: #083b6e; stroke-width: 2; rx: 12; }
+      .node2 { fill: #0f766e; stroke: #115e59; stroke-width: 2; rx: 12; }
+      .node3 { fill: #0f172a; stroke: #020617; stroke-width: 2; rx: 12; }
+      .zone { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 2; rx: 12; }
+      .text { font: 700 16px Arial, sans-serif; fill: #ffffff; text-anchor: middle; }
+      .small { font: 600 13px Arial, sans-serif; fill: #e2e8f0; text-anchor: middle; }
+      .dark { font: 700 14px Arial, sans-serif; fill: #0f172a; text-anchor: middle; }
+      .route { font: 600 13px Consolas, monospace; fill: #0f172a; text-anchor: middle; }
+      .line { stroke: #475569; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1700" height="980" class="bg"/>
+
+  <text x="850" y="50" class="title" text-anchor="middle">Wigenz Access Model Organigramme</text>
+  <text x="850" y="80" class="subtitle" text-anchor="middle">RBAC + ABAC global | ReBAC actif seulement Support et Finance</text>
+
+  <rect x="730" y="110" width="240" height="82" class="nodeTop"/>
+  <text x="850" y="146" class="text">CEO / FONDATEUR</text>
+  <text x="850" y="170" class="small">gouvernance produit</text>
+
+  <rect x="730" y="235" width="240" height="82" class="node"/>
+  <text x="850" y="270" class="text">SUPER_ADMIN</text>
+  <text x="850" y="294" class="small">acces total</text>
+
+  <rect x="100" y="390" width="200" height="76" class="node"/>
+  <text x="200" y="423" class="text">TECH_ADMIN</text>
+  <text x="200" y="444" class="small">logs, config</text>
+
+  <rect x="320" y="390" width="210" height="76" class="node"/>
+  <text x="425" y="423" class="text">FINANCE_ADMIN</text>
+  <text x="425" y="444" class="small">payments, payouts</text>
+
+  <rect x="550" y="390" width="210" height="76" class="node"/>
+  <text x="655" y="423" class="text">SUPPORT_ADMIN</text>
+  <text x="655" y="444" class="small">supervision support</text>
+
+  <rect x="780" y="390" width="210" height="76" class="node"/>
+  <text x="885" y="423" class="text">SUPPORT_AGENT</text>
+  <text x="885" y="444" class="small">tickets quotidiens</text>
+
+  <rect x="1010" y="390" width="210" height="76" class="node"/>
+  <text x="1115" y="423" class="text">RISK_ADMIN</text>
+  <text x="1115" y="444" class="small">fraude, blocages</text>
+
+  <rect x="1240" y="390" width="230" height="76" class="node"/>
+  <text x="1355" y="423" class="text">OPERATIONS_ADMIN</text>
+  <text x="1355" y="444" class="small">orders, dispatch</text>
+
+  <rect x="1490" y="390" width="140" height="76" class="node"/>
+  <text x="1560" y="423" class="text">HR_ADMIN</text>
+  <text x="1560" y="444" class="small">RH</text>
+
+  <rect x="80" y="540" width="1550" height="180" class="zone"/>
+  <text x="855" y="575" class="dark">Permission Layer (RBAC + ABAC)</text>
+  <text x="855" y="602" class="dark">users.* drivers.* orders.* dispatch.* payments.* payouts.* tickets.* risk.* audit.* config.* roles.* hr.*</text>
+
+  <rect x="280" y="620" width="300" height="78" class="node2"/>
+  <text x="430" y="652" class="text">ReBAC Zone: SUPPORT</text>
+  <text x="430" y="674" class="small">ASSIGNEE / team / manager</text>
+
+  <rect x="760" y="620" width="300" height="78" class="node2"/>
+  <text x="910" y="652" class="text">ReBAC Zone: FINANCE</text>
+  <text x="910" y="674" class="small">membership team FINANCE</text>
+
+  <rect x="1240" y="620" width="300" height="78" class="node3"/>
+  <text x="1390" y="652" class="text">Future Zones (si besoin)</text>
+  <text x="1390" y="674" class="small">HR / B2B / Risk avance</text>
+
+  <text x="430" y="780" class="route">/admin/support/*   +   /api/support/*</text>
+  <text x="910" y="780" class="route">/admin/finance/*   +   /api/payments   +   /api/payouts</text>
+  <text x="1390" y="780" class="route">pas active aujourd'hui</text>
+
+  <text x="850" y="900" class="subtitle" text-anchor="middle">Controle automatique: check:rebac-readiness en CI pour detecter de nouveaux domaines relationnels.</text>
+
+  <path d="M850 192 L850 235" class="line"/>
+  <path d="M850 317 L200 390" class="line"/>
+  <path d="M850 317 L425 390" class="line"/>
+  <path d="M850 317 L655 390" class="line"/>
+  <path d="M850 317 L885 390" class="line"/>
+  <path d="M850 317 L1115 390" class="line"/>
+  <path d="M850 317 L1355 390" class="line"/>
+  <path d="M850 317 L1560 390" class="line"/>
+
+  <path d="M655 466 L430 620" class="line"/>
+  <path d="M885 466 L430 620" class="line"/>
+  <path d="M425 466 L910 620" class="line"/>
+</svg>

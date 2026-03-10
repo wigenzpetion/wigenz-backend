@@ -1,0 +1,44 @@
+{
+  "assignments": [
+    {
+      "email": "superadmin@wigenz.test",
+      "roles": ["SUPER_ADMIN"],
+      "primaryRole": "SUPER_ADMIN"
+    },
+    {
+      "email": "finance@wigenz.test",
+      "roles": ["FINANCE_ADMIN"],
+      "primaryRole": "FINANCE_ADMIN"
+    },
+    {
+      "email": "ops@wigenz.test",
+      "roles": ["OPERATIONS_ADMIN"],
+      "primaryRole": "OPERATIONS_ADMIN"
+    },
+    {
+      "email": "support.admin@wigenz.test",
+      "roles": ["SUPPORT_ADMIN"],
+      "primaryRole": "SUPPORT_ADMIN"
+    },
+    {
+      "email": "support.agent@wigenz.test",
+      "roles": ["SUPPORT_AGENT"],
+      "primaryRole": "SUPPORT_AGENT"
+    },
+    {
+      "email": "risk@wigenz.test",
+      "roles": ["RISK_ADMIN"],
+      "primaryRole": "RISK_ADMIN"
+    },
+    {
+      "email": "tech@wigenz.test",
+      "roles": ["TECH_ADMIN"],
+      "primaryRole": "TECH_ADMIN"
+    },
+    {
+      "email": "hr@wigenz.test",
+      "roles": ["HR_ADMIN"],
+      "primaryRole": "HR_ADMIN"
+    }
+  ]
+}
