@@ -26,17 +26,17 @@ jobs:
           --health-retries 10
 
     env:
-      PORT: ${{ vars.PORT || '3000' }}
-      CORS_ORIGIN: ${{ vars.CORS_ORIGIN || 'http://localhost:3001' }}
-      DB_HOST: ${{ secrets.DB_HOST || '127.0.0.1' }}
-      DB_PORT: ${{ secrets.DB_PORT || '5432' }}
-      DB_USER: ${{ secrets.DB_USER || 'postgres' }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
-      DB_NAME: ${{ secrets.DB_NAME || 'wigenz_db' }}
-      DB_SSL: ${{ vars.DB_SSL || 'false' }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci_jwt_secret' }}
-      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET || 'ci_refresh_secret' }}
-      SUPER_ADMIN_EMAIL: ${{ vars.SUPER_ADMIN_EMAIL || 'admin@example.com' }}
+      PORT: ${{ vars.PORT }}
+      CORS_ORIGIN: ${{ vars.CORS_ORIGIN }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_SSL: ${{ vars.DB_SSL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+      SUPER_ADMIN_EMAIL: ${{ vars.SUPER_ADMIN_EMAIL }}
 
     steps:
       - name: Checkout
@@ -46,6 +46,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Apply CI defaults
+        shell: bash
+        run: |
+          echo "PORT=${PORT:-3000}" >> "$GITHUB_ENV"
+          echo "CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3001}" >> "$GITHUB_ENV"
+          echo "DB_HOST=${DB_HOST:-127.0.0.1}" >> "$GITHUB_ENV"
+          echo "DB_PORT=${DB_PORT:-5432}" >> "$GITHUB_ENV"
+          echo "DB_USER=${DB_USER:-postgres}" >> "$GITHUB_ENV"
+          echo "DB_PASSWORD=${DB_PASSWORD:-postgres}" >> "$GITHUB_ENV"
+          echo "DB_NAME=${DB_NAME:-wigenz_db}" >> "$GITHUB_ENV"
+          echo "DB_SSL=${DB_SSL:-false}" >> "$GITHUB_ENV"
+          echo "JWT_SECRET=${JWT_SECRET:-ci_jwt_secret}" >> "$GITHUB_ENV"
+          echo "JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-ci_refresh_secret}" >> "$GITHUB_ENV"
+          echo "SUPER_ADMIN_EMAIL=${SUPER_ADMIN_EMAIL:-admin@example.com}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: npm install
